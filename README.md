@@ -8,8 +8,8 @@
 
 # 使い方
 ## クローン
-$ git clone https://github.com/kinmojr/mnist_java.git  
-$ cd mnist_java.git  
+$ git clone https://github.com/kinmojr/MNIST_Java.git  
+$ cd MNIST_Java  
 
 ## ビルド
 $ mvn clean package  
