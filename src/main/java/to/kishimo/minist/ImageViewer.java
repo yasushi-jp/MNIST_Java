@@ -2,6 +2,7 @@ package to.kishimo.minist;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +67,11 @@ public class ImageViewer {
     public void showImage(int index) {
         BufferedImage image = makeImage(index);
         Icon icon = new ImageIcon(image);
-        JOptionPane.showMessageDialog(null, labels[index], "MnistImageViewer", JOptionPane.PLAIN_MESSAGE, icon);
+        try {
+            JOptionPane.showMessageDialog(null, labels[index], "MnistImageViewer", JOptionPane.PLAIN_MESSAGE, icon);
+        } catch (HeadlessException e) {
+            System.out.println("Image dialog can't be displayed on CUI environment.");
+        }
     }
 
     /**
