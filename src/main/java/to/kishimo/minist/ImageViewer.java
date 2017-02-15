@@ -19,11 +19,11 @@ public class ImageViewer {
      * @param imageFile 画像ファイル名
      * @param labelFile ラベルファイル名
      */
-    public ImageViewer(String imageFile, String labelFile) throws IOException {
-        ImageDataSet imageData = new ImageDataSet(imageFile);
+    public ImageViewer(String imageFile, String labelFile) throws IOException, ClassNotFoundException {
+        ImageDataSet imageData = ImageDataSet.create(imageFile);
         images = imageData.getFeatures();
 
-        LabelDataSet labelData = new LabelDataSet(labelFile);
+        LabelDataSet labelData = LabelDataSet.create(labelFile);
         labels = labelData.getLabels();
     }
 

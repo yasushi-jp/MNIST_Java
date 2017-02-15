@@ -1,15 +1,13 @@
 package to.kishimo.minist;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.GZIPInputStream;
 
 /**
  * MNISTの手書き文字の画像データを扱うクラス.
  */
-public class ImageDataSet {
+public class ImageDataSet implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String fileName = "";
     private int numImages;
     private int numDimensions;
@@ -20,7 +18,7 @@ public class ImageDataSet {
      *
      * @param fileName 画像データのファイル名
      */
-    public ImageDataSet(String fileName) throws IOException {
+    private ImageDataSet(String fileName) throws IOException, ClassNotFoundException {
         this.fileName = fileName;
 
         File baseDir = new File(Const.BASE_PATH);
@@ -29,8 +27,27 @@ public class ImageDataSet {
         }
 
         Util.download(Const.BASE_URL, Const.BASE_PATH, fileName);
+    }
 
-        loadFeatures();
+    /**
+     * 画像データセットのインスタンスを作成する.
+     *
+     * @param fileName 画像データのファイル名
+     * @return 画像データセットのインスタンス
+     */
+    public static ImageDataSet create(String fileName) throws IOException, ClassNotFoundException {
+        if (new File(Const.BASE_PATH + fileName + ".ser").exists()) {
+            System.out.println("Deserializing feature data from " + fileName + ".ser ...");
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(Const.BASE_PATH + fileName + ".ser"));
+            return (ImageDataSet) ois.readObject();
+        } else {
+            System.out.println("Loading feature data from " + fileName + " ...");
+            ImageDataSet imageDataSet = new ImageDataSet(fileName);
+            imageDataSet.loadFeatures();
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(Const.BASE_PATH + fileName + ".ser"));
+            oos.writeObject(imageDataSet);
+            return imageDataSet;
+        }
     }
 
     /**
@@ -38,6 +55,7 @@ public class ImageDataSet {
      *
      * @return 画像数
      */
+
     public int getNumImages() {
         return numImages;
     }
@@ -64,7 +82,6 @@ public class ImageDataSet {
      * 特徴量データを読み込む.
      */
     private void loadFeatures() throws IOException {
-        System.out.println("Loading feature data from " + fileName + " ...");
         DataInputStream is = new DataInputStream(new GZIPInputStream(new FileInputStream(Const.BASE_PATH + fileName)));
         is.readInt();
         numImages = is.readInt();

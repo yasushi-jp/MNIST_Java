@@ -1,15 +1,13 @@
 package to.kishimo.minist;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.GZIPInputStream;
 
 /**
  * MNISTの手書き文字の正解ラベルデータを扱うクラス.
  */
-public class LabelDataSet {
+public class LabelDataSet implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String fileName = "";
     private int numLabels;
     private int[] labels;
@@ -19,7 +17,7 @@ public class LabelDataSet {
      *
      * @param fileName 正解ラベルデータのファイル名
      */
-    public LabelDataSet(String fileName) throws IOException {
+    private LabelDataSet(String fileName) throws IOException {
         this.fileName = fileName;
 
         File baseDir = new File(Const.BASE_PATH);
@@ -28,8 +26,27 @@ public class LabelDataSet {
         }
 
         Util.download(Const.BASE_URL, Const.BASE_PATH, fileName);
+    }
 
-        loadLabels();
+    /**
+     * 正解ラベルデータセットのインスタンスを作成する.
+     *
+     * @param fileName 正解ラベルデータのファイル名
+     * @return 正解ラベルデータセットのインスタンス
+     */
+    public static LabelDataSet create(String fileName) throws IOException, ClassNotFoundException {
+        if (new File(Const.BASE_PATH + fileName + ".ser").exists()) {
+            System.out.println("Deserializing label data from " + fileName + ".ser ...");
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(Const.BASE_PATH + fileName + ".ser"));
+            return (LabelDataSet) ois.readObject();
+        } else {
+            System.out.println("Loading label data from " + fileName + " ...");
+            LabelDataSet labelDataSet = new LabelDataSet(fileName);
+            labelDataSet.loadLabels();
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(Const.BASE_PATH + fileName + ".ser"));
+            oos.writeObject(labelDataSet);
+            return labelDataSet;
+        }
     }
 
     /**
@@ -54,7 +71,6 @@ public class LabelDataSet {
      * 正解ラベルデータを読み込む.
      */
     private void loadLabels() throws IOException {
-        System.out.println("Loading label data from " + fileName + " ...");
         DataInputStream is = new DataInputStream(new GZIPInputStream(new FileInputStream(Const.BASE_PATH + fileName)));
 
         is.readInt();
