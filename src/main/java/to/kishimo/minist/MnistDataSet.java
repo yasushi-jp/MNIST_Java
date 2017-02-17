@@ -18,9 +18,9 @@ public class MnistDataSet implements Serializable {
     public static final String TRAIN_LABEL_FILE = "train-labels-idx1-ubyte.gz";
     public static final String TEST_IMAGE_FILE = "t10k-images-idx3-ubyte.gz";
     public static final String TEST_LABEL_FILE = "t10k-labels-idx1-ubyte.gz";
-    public static final String BASE_PATH = "./dataset/mnist/";
 
     private static final String BASE_URL = "http://yann.lecun.com/exdb/mnist/";
+    private static final String BASE_PATH = "./dataset/mnist/";
     private static final String SERIALIZED_FILE = "_mnist.ser";
     private static final long serialVersionUID = 1L;
 
@@ -28,6 +28,29 @@ public class MnistDataSet implements Serializable {
     private int numDimensions;
     private double[][] features;
     private int[] labels;
+
+    /**
+     * 使用例.
+     */
+    public static void main(String... args) throws IOException, ClassNotFoundException {
+        // トレーニングデータセット
+        MnistDataSet trainDataSet = MnistDataSet.createInstance("train", TRAIN_IMAGE_FILE, TRAIN_LABEL_FILE);
+        // 概形を表示する
+        trainDataSet.showImageAsText(0);
+        // 画像を表示する
+        trainDataSet.showImage(1);
+        // 画像を保存する
+        trainDataSet.saveImage(BASE_PATH, "train", 2);
+
+        // テストデータセット
+        MnistDataSet testDataSet = MnistDataSet.createInstance("test", TEST_IMAGE_FILE, TEST_LABEL_FILE);
+        // 概形を表示する
+        testDataSet.showImageAsText(0);
+        // 画像を表示する
+        testDataSet.showImage(1);
+        // 画像を保存する
+        testDataSet.saveImage(BASE_PATH, "test", 2);
+    }
 
     /**
      * Mnistデータセットのインスタンスを作成する.
