@@ -7,4 +7,11 @@
     <groupId>to.kishimo</groupId>
     <artifactId>mnist_java</artifactId>
     <version>0.1</version>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 </project>
